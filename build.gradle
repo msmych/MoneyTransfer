@@ -16,8 +16,11 @@ dependencies {
             'com.google.code.gson:gson:2.8.5',
             'org.eclipse.jetty:jetty-server:9.4.18.v20190429',
             'org.eclipse.jetty:jetty-servlet:9.4.18.v20190429',
+            'org.hibernate:hibernate-entitymanager:5.4.2.Final',
+            'com.google.code.gson:gson:2.8.5',
             'ch.qos.logback:logback-classic:1.2.3'
-    runtime 'org.codehaus.groovy:groovy:2.5.7'
+    runtimeOnly 'org.codehaus.groovy:groovy:2.5.7',
+            'com.h2database:h2:1.4.199'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.4.2',
             'com.nhaarman.mockitokotlin2:mockito-kotlin:2.1.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.4.2'
