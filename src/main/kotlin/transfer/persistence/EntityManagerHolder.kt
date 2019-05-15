@@ -12,6 +12,10 @@ class EntityManagerHolder @Inject constructor(private val em: EntityManager) {
 
     private val logger = LoggerFactory.getLogger(AccountRepository::class.java)
 
+    fun <T> getById(id: String, type: Class<T>): T? {
+        return em.find(type, id)
+    }
+
     @Synchronized fun executeInTransaction(execution: Consumer<EntityManager>) {
         val transaction = em.transaction
         transaction.begin()
@@ -23,9 +27,5 @@ class EntityManagerHolder @Inject constructor(private val em: EntityManager) {
             transaction.rollback()
             throw e
         }
-    }
-
-    fun <T> getById(id: String, type: Class<T>): T? {
-        return em.find(type, id)
     }
 }

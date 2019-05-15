@@ -3,6 +3,7 @@ package transfer.account.deposit
 import com.google.gson.Gson
 import com.google.inject.Inject
 import com.google.inject.Singleton
+import org.slf4j.LoggerFactory
 import transfer.account.AccountRepository
 import javax.servlet.http.HttpServlet
 import javax.servlet.http.HttpServletRequest
@@ -10,6 +11,8 @@ import javax.servlet.http.HttpServletResponse
 
 @Singleton
 class DepositServlet : HttpServlet() {
+
+    private val logger = LoggerFactory.getLogger(DepositServlet::class.java)
 
     private val gson = Gson()
 
@@ -22,6 +25,10 @@ class DepositServlet : HttpServlet() {
             resp?.sendError(400, "Missing body")
             return
         }
+        if (deposit.accountId == null) {
+            resp?.sendError(400, "Missing accountId")
+            return
+        }
         if (deposit.amount <= 0) {
             resp?.sendError(422, "Amount must be positive")
             return
@@ -32,6 +39,7 @@ class DepositServlet : HttpServlet() {
             resp?.sendError(500, e.message)
             return
         }
+        logger.info("${deposit.accountId} +${deposit.amount}")
     }
 
     data class Deposit(val accountId: String, val amount: Long)

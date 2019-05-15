@@ -21,6 +21,15 @@ class AccountRepository @Inject constructor(private val entityManagerHolder: Ent
             })
     }
 
+    fun remove(id: String) {
+        entityManagerHolder.executeInTransaction(
+            Consumer {
+                val account = it.find(Account::class.java, id)
+                        ?: throw IllegalArgumentException("Account $id not exists")
+                it.remove(account)
+            })
+    }
+
     fun deposit(deposit: Deposit) {
         entityManagerHolder.executeInTransaction(
             Consumer {

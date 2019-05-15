@@ -11,12 +11,12 @@ import javax.servlet.http.HttpServletResponse
 @Singleton
 class AccountServlet : HttpServlet() {
 
+    private val logger = LoggerFactory.getLogger(AccountServlet::class.java)
+
     private val gson = Gson()
 
     @Inject
     lateinit var accountRepository: AccountRepository
-
-    private val logger = LoggerFactory.getLogger(AccountServlet::class.java)
 
     override fun doGet(req: HttpServletRequest?, resp: HttpServletResponse?) {
         val id = req?.getParameter("id") ?: return
@@ -31,4 +31,15 @@ class AccountServlet : HttpServlet() {
     }
 
     data class AccountId(val id: String)
+
+    override fun doDelete(req: HttpServletRequest?, resp: HttpServletResponse?) {
+        val id = req?.getParameter("id") ?: return
+        try {
+            accountRepository.remove(id)
+        } catch (e: Exception) {
+            resp?.sendError(500, e.message)
+            return
+        }
+        logger.info("Removed account $id")
+    }
 }
