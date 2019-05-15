@@ -3,6 +3,7 @@ package transfer.account
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import transfer.account.deposit.DepositServlet.Deposit
+import transfer.account.withdraw.WithdrawalServlet.Withdrawal
 import transfer.persistence.EntityManagerHolder
 import java.util.function.Consumer
 
@@ -36,6 +37,17 @@ class AccountRepository @Inject constructor(private val entityManagerHolder: Ent
                 val account = it.find(Account::class.java, deposit.accountId)
                     ?: throw IllegalArgumentException("Account ${deposit.accountId} not exists")
                 it.merge(Account(account.id, account.balance + deposit.amount))
+            })
+    }
+
+    fun withdraw(withdrawal: Withdrawal) {
+        entityManagerHolder.executeInTransaction(
+            Consumer {
+                val account = it.find(Account::class.java, withdrawal.accountId)
+                    ?: throw IllegalArgumentException("Account ${withdrawal.accountId} not exists")
+                if (account.balance < withdrawal.amount)
+                    throw IllegalArgumentException("Insufficient balance")
+                it.merge(Account(account.id, account.balance - withdrawal.amount))
             })
     }
 }

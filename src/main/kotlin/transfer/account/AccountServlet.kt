@@ -33,7 +33,11 @@ class AccountServlet : HttpServlet() {
     data class AccountId(val id: String)
 
     override fun doDelete(req: HttpServletRequest?, resp: HttpServletResponse?) {
-        val id = req?.getParameter("id") ?: return
+        val id = req?.getParameter("id")
+        if (id == null) {
+            resp?.sendError(400, "Missing id parameter")
+            return
+        }
         try {
             accountRepository.remove(id)
         } catch (e: Exception) {

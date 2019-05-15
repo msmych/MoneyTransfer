@@ -23,7 +23,7 @@ class EntityManagerHolder @Inject constructor(private val em: EntityManager) {
             execution.accept(em)
             transaction.commit()
         } catch (e: Exception) {
-            logger.error(e.message, e)
+            logger.error(e.message)
             transaction.rollback()
             throw e
         }
