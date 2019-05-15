@@ -3,6 +3,7 @@ package transfer.module
 import com.google.inject.servlet.ServletModule
 import transfer.account.AccountServlet
 import transfer.account.deposit.DepositServlet
+import transfer.account.transfer.TransferServlet
 import transfer.account.withdraw.WithdrawalServlet
 
 class AppServletModule : ServletModule() {
@@ -11,5 +12,6 @@ class AppServletModule : ServletModule() {
         serve("/account").with(AccountServlet::class.java)
         serve("/account/deposit").with(DepositServlet::class.java)
         serve("/account/withdraw").with(WithdrawalServlet::class.java)
+        serve("/account/transfer").with(TransferServlet::class.java)
     }
 }

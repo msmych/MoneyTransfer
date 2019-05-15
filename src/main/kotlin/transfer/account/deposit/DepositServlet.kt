@@ -42,5 +42,4 @@ class DepositServlet : HttpServlet() {
         logger.info("${deposit.accountId} +${deposit.amount}")
     }
 
-    data class Deposit(val accountId: String, val amount: Long)
 }

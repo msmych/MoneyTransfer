@@ -1,4 +1,4 @@
-package transfer.account.withdraw
+package transfer.account.transfer
 
 import com.google.gson.Gson
 import com.google.inject.Inject
@@ -10,9 +10,9 @@ import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
 @Singleton
-class WithdrawalServlet : HttpServlet() {
+class TransferServlet : HttpServlet() {
 
-    private val logger = LoggerFactory.getLogger(WithdrawalServlet::class.java)
+    private val logger = LoggerFactory.getLogger(TransferServlet::class.java)
 
     private val gson = Gson()
 
@@ -20,26 +20,30 @@ class WithdrawalServlet : HttpServlet() {
     lateinit var accountRepository: AccountRepository
 
     override fun doPost(req: HttpServletRequest?, resp: HttpServletResponse?) {
-        val withdrawal = gson.fromJson<Withdrawal>(req?.reader, Withdrawal::class.java)
-        if (withdrawal == null) {
+        val transfer = gson.fromJson<Transfer>(req?.reader, Transfer::class.java)
+        if (transfer == null) {
             resp?.sendError(400, "Missing body")
             return
         }
-        if (withdrawal.accountId == null) {
-            resp?.sendError(400, "Missing account id")
+        if (transfer.sourceId == null) {
+            resp?.sendError(400, "Missing sourceId")
             return
         }
-        if (withdrawal.amount <= 0) {
+        if (transfer.targetId == null) {
+            resp?.sendError(400, "Missing targetId")
+            return
+        }
+        if (transfer.amount <= 0) {
             resp?.sendError(422, "Amount must be positive")
             return
         }
         try {
-            accountRepository.withdraw(withdrawal)
+            accountRepository.transfer(transfer)
         } catch (e: Exception) {
             resp?.sendError(500, e.message)
             return
         }
-        logger.info("${withdrawal.accountId} -${withdrawal.amount}")
+        logger.info("${transfer.sourceId} → ${transfer.amount} → ${transfer.targetId}")
     }
 
 }
