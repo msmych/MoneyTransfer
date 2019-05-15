@@ -2,35 +2,31 @@ package transfer.account
 
 import com.google.inject.Inject
 import com.google.inject.Singleton
-import org.slf4j.LoggerFactory
-import javax.persistence.EntityManager
+import transfer.account.deposit.DepositServlet.Deposit
+import transfer.persistence.EntityManagerHolder
+import java.util.function.Consumer
 
 @Singleton
-class AccountRepository @Inject constructor(private val em: EntityManager) {
-
-    private val logger = LoggerFactory.getLogger(AccountRepository::class.java)
-
-    @Synchronized private fun executeInTransaction(runnable: Runnable) {
-        val transaction = em.transaction
-        transaction.begin()
-        try {
-            runnable.run()
-            transaction.commit()
-        } catch (e: Exception) {
-            logger.error(e.message, e)
-            transaction.rollback()
-        }
-    }
+class AccountRepository @Inject constructor(private val entityManagerHolder: EntityManagerHolder) {
 
     fun getById(id: String): Account? {
-        return em.find(Account::class.java, id)
+        return entityManagerHolder.getById(id, Account::class.java)
     }
 
     fun create(id: String) {
-        executeInTransaction(
-            Runnable {
-                if (em.find(Account::class.java, id) == null)
-                    em.persist(Account(id, 0))
+        entityManagerHolder.executeInTransaction(
+            Consumer {
+                if (it.find(Account::class.java, id) == null)
+                    it.persist(Account(id, 0))
+            })
+    }
+
+    fun deposit(deposit: Deposit) {
+        entityManagerHolder.executeInTransaction(
+            Consumer {
+                val account = it.find(Account::class.java, deposit.accountId)
+                    ?: throw IllegalArgumentException("Account ${deposit.accountId} not exists")
+                it.merge(Account(account.id, account.balance + deposit.amount))
             })
     }
 }

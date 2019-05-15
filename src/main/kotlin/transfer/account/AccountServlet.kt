@@ -20,6 +20,7 @@ class AccountServlet : HttpServlet() {
 
     override fun doGet(req: HttpServletRequest?, resp: HttpServletResponse?) {
         val id = req?.getParameter("id") ?: return
+        resp?.contentType = "application/json"
         resp?.writer?.write(gson.toJson(accountRepository.getById(id)))
     }
 
