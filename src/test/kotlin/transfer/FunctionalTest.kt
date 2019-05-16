@@ -6,10 +6,11 @@ import org.eclipse.jetty.server.Server
 import org.eclipse.jetty.servlet.DefaultServlet
 import org.eclipse.jetty.servlet.ServletContextHandler
 import org.junit.jupiter.api.AfterAll
-import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import transfer.account.AccountServlet
+import transfer.account.Account
+import transfer.account.AccountId
 import transfer.module.AppPersistenceModule
 import transfer.module.AppServletModule
 import java.util.*
@@ -42,6 +43,22 @@ class FunctionalTest {
 
     @Test
     fun test() {
-        assertEquals(200, restClient.post("account", AccountServlet.AccountId("accountId")).responseCode)
+        assertNull(restClient.get("account?id=Bill", Account::class.java))
+        createAccount("Billie")
+        assertAccountEquals("Billie", 0, restClient.get("account?id=Billie", Account::class.java))
+        createAccount("Alice")
+        assertAccountEquals("Alice", 0, restClient.get("account?id=Alice", Account::class.java))
+    }
+
+    private fun createAccount(id: String) {
+        val http = restClient.post("account", AccountId(id))
+        http.connect()
+        assertEquals(200, http.responseCode)
+    }
+
+    private fun assertAccountEquals(id: String, balance: Long, account: Account?) {
+        assertNotNull(account)
+        assertEquals(id, account?.id)
+        assertEquals(balance, account?.balance)
     }
 }

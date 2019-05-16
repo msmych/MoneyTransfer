@@ -30,8 +30,6 @@ class AccountServlet : HttpServlet() {
         logger.info("Created account $id")
     }
 
-    data class AccountId(val id: String)
-
     override fun doDelete(req: HttpServletRequest?, resp: HttpServletResponse?) {
         val id = req?.getParameter("id")
         if (id == null) {
