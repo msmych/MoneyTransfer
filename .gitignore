@@ -2,5 +2,6 @@
 gradle.properties
 
 build
+out
 
 .idea
