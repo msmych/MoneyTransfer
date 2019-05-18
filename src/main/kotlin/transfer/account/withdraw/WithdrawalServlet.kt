@@ -27,8 +27,8 @@ class WithdrawalServlet : HttpServlet() {
             return
         }
         if (withdrawal.accountId == null) {
-            resp?.sendError(400, "$withdrawal: missing account id")
-            logger.error("$withdrawal: missing account id")
+            resp?.sendError(400, "$withdrawal: missing accountId")
+            logger.error("$withdrawal: missing accountId")
             return
         }
         if (withdrawal.amount <= 0) {
