@@ -23,14 +23,17 @@ class DepositServlet : HttpServlet() {
         val deposit = gson.fromJson<Deposit>(req?.reader, Deposit::class.java)
         if (deposit == null) {
             resp?.sendError(400, "Missing body")
+            logger.error("Missing body")
             return
         }
         if (deposit.accountId == null) {
-            resp?.sendError(400, "Missing accountId")
+            resp?.sendError(400, "$deposit: missing accountId")
+            logger.error("$deposit: missing accountId")
             return
         }
         if (deposit.amount <= 0) {
-            resp?.sendError(422, "Amount must be positive")
+            resp?.sendError(422, "$deposit: amount must be positive")
+            logger.error("$deposit: amount must be positive")
             return
         }
         try {

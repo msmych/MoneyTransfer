@@ -23,14 +23,17 @@ class WithdrawalServlet : HttpServlet() {
         val withdrawal = gson.fromJson<Withdrawal>(req?.reader, Withdrawal::class.java)
         if (withdrawal == null) {
             resp?.sendError(400, "Missing body")
+            logger.error("Missing body")
             return
         }
         if (withdrawal.accountId == null) {
-            resp?.sendError(400, "Missing account id")
+            resp?.sendError(400, "$withdrawal: missing account id")
+            logger.error("$withdrawal: missing account id")
             return
         }
         if (withdrawal.amount <= 0) {
-            resp?.sendError(422, "Amount must be positive")
+            resp?.sendError(422, "$withdrawal: amount must be positive")
+            logger.error("$withdrawal: amount must be positive")
             return
         }
         try {
