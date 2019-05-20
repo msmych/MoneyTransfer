@@ -28,7 +28,7 @@ class TransferServlet : HttpServlet() {
         }
         if (transfer.sourceId == null) {
             resp?.sendError(400, "$transfer: missing sourceId")
-            logger.error("$transfer: issing sourceId")
+            logger.error("$transfer: missing sourceId")
             return
         }
         if (transfer.targetId == null) {
